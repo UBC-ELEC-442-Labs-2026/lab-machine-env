@@ -6,6 +6,11 @@ from hal.products.qarm import QArmKeyboardNavigator, QArmUtilities
 from pal.utilities.keyboard import PygameKeyboard 
 
 if __name__ == "__main__":
+
+    mode = "-1"
+    while(int(mode) != 0 and int(mode) != 1):
+        mode = input("Enter 1 for real hardware, 0 for simulation: ")
+
     # 1. Initialize the Pygame Keyboard
     kbd = PygameKeyboard()
     
@@ -120,7 +125,7 @@ if __name__ == "__main__":
     ledCmd = np.array([0, 1, 0], dtype=np.float64)  
 
     print("Connecting to QArm... Ensure hardware/simulation is ready.")
-    with QArm(hardware=0, readMode=0) as myArm:
+    with QArm(hardware=int(mode), readMode=0) as myArm:
         np.set_printoptions(precision=2, suppress=True)
 
         initial_pose = myArm.measJointPosition[0:4]
@@ -141,6 +146,8 @@ if __name__ == "__main__":
 
                 # 1. Update active configurations
                 kbd.read()
+
+                print(f"{myArm.measJointCurrent}")
 
                 # 2. Run control math logic and pipeline updates
                 raw_target_phi = navigator.move_joints_with_keyboard(timestep=TIMESTEP)

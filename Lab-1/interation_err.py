@@ -10,7 +10,7 @@ import matplotlib.animation as animation
 # Circle Parameters
 CIRCLE_CENTER = np.array([0.55, 0.0, 0.4]) # Centered at X=0.4, Y=0.0, Z=0.4
 RADIUS = 0.15
-OMEGA = 2.0 * np.pi / 3.0  # Angular velocity (1 full rotation every 3 seconds)
+OMEGA = 2.0 * np.pi / 6.0  # Angular velocity (1 full rotation every 3 seconds)
 DRIFT_THRESHOLD = 0.4      # Stop when distance from center > 0.4m
 
 # --- 3D ANIMATION SETUP ---
@@ -112,7 +112,11 @@ def update(frame, myArm):
 
 #endregion
 
-with QArm(hardware=0, readMode=0) as myArm:
+mode = "-1"
+while(int(mode) != 0 and int(mode) != 1):
+    mode = input("Enter 1 for real hardware, 0 for simulation: ")
+
+with QArm(hardware=int(mode), readMode=0) as myArm:
     np.set_printoptions(precision=2, suppress=True)
 
     # Move to the exact geometric starting position of the circle cycle (t=0)
