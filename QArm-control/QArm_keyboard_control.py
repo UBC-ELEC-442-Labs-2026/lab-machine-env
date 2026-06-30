@@ -4,6 +4,7 @@ import pygame  # Used for key constants and font rendering
 from pal.products.qarm import QArm
 from hal.products.qarm import QArmKeyboardNavigator, QArmUtilities
 from pal.utilities.keyboard import PygameKeyboard 
+from QArm_functions import QArm_Lab_interface
 
 if __name__ == "__main__":
 
@@ -21,8 +22,8 @@ if __name__ == "__main__":
     # Resize the window slightly to fit both joint angles and Cartesian coordinates
     screen = pygame.display.set_mode((650, 160))
 
-    # Instantiate Quanser's utility class for Forward Kinematics
-    arm_utils = QArmUtilities()
+    # Instantiate QArm Lab interface
+    qarm_interface = QArm_Lab_interface()
 
     # --- JOINT LIMIT DEFINITIONS (From Specification Sheet) ---
     # Converted from degrees to radians for mathematical comparisons
@@ -41,6 +42,13 @@ if __name__ == "__main__":
     def patched_read():
         global gripper_closed, space_was_pressed
         original_read()  # Run the original pygame key state grabber
+        
+        # Process Pygame events to keep the window responsive and prevent OS force-closes
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                import sys
+                sys.exit()
         
         # Grab the raw pygame key states again
         keys = pygame.key.get_pressed()
@@ -62,9 +70,9 @@ if __name__ == "__main__":
         # --- LIVE RENDER TO WINDOW ---
         angles_deg = latest_phi * 180.0 / np.pi
         
-        # Use QArmUtilities to calculate location from the 4 joint angles + gamma=0
+        # Use QArm_Lab_interface to calculate location from the 4 joint angles + gamma=0
         fk_input = np.append(latest_phi, 0.0)
-        ee_pos, _ = arm_utils.forward_kinematics(fk_input)
+        ee_pos, _ = qarm_interface.forward_kinematics(fk_input)
         
         # Clear the window with a clean dark-gray slate background
         screen.fill((30, 30, 30))
@@ -128,6 +136,8 @@ if __name__ == "__main__":
     with QArm(hardware=int(mode), readMode=0) as myArm:
         np.set_printoptions(precision=2, suppress=True)
 
+        qarm_interface.attach_QArm(myArm)
+
         initial_pose = myArm.measJointPosition[0:4]
         if np.allclose(initial_pose, 0.0):
             initial_pose = QArm.HOME_POSE
@@ -165,11 +175,14 @@ if __name__ == "__main__":
                 latest_phi = target_phi
                 current_active_idx = navigator.active_joint
                 
-                # Map boolean gripper state to standard hardware float command
-                gripCmd = 1.0 if gripper_closed else 0.0
+                # Handle Gripper
+                if gripper_closed and qarm_interface.gripper_state == "OPEN":
+                    qarm_interface.close_gripper()
+                elif not gripper_closed and qarm_interface.gripper_state != "OPEN":
+                    qarm_interface.open_gripper()
                 
                 # 3. Write standard output command configurations out to physical hardware channels
-                myArm.read_write_std(phiCMD=target_phi, gprCMD=gripCmd, baseLED=ledCmd)
+                qarm_interface.write_to_arm(target_phi)
 
                 # Consistent Pacing Maintenance
                 elapsed = time.time() - loop_start
@@ -181,5 +194,6 @@ if __name__ == "__main__":
         
         finally:
             kbd.terminate()
+            qarm_interface.shutdown()
             myArm.terminate()
             print("Session ended successfully.")
