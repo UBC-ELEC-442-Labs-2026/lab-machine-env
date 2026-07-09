@@ -4,9 +4,9 @@ This repo contains the code to be put onto the lab computers for controlling the
 The repo itself will be visible to students who wish to test any of the functionality here on their own devices through the virtual QArm. See the "Setting up the Virtual QArm" Section below.
 
 ## QArm-control
-This folder contains programs made to ensure safe usage of the QArm. A work in progress at the moment, this will eventually contain the an abstraction layer above the Quanser libraries to enforce things such as a safe-zone.
+This folder contains programs made to allow the (safe) usage of the QArm.
 
-This will also contain code that is used between multiple labs for convenience
+This will also contain code that is used between multiple labs for convenience.
 
 **`QArm_keyboard_control.py`**:  
  Implements control of the QArm using the keyboard via pygame. Generates a window that displays the live joint positions of the arm. Also note that the pygame window must be focused for the controls to register.
