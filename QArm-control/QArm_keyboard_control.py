@@ -157,7 +157,7 @@ if __name__ == "__main__":
                 # 1. Update active configurations
                 kbd.read()
 
-                print(f"{myArm.measJointCurrent}")
+                #print(f"{myArm.measJointCurrent}") # display joint currents
 
                 # 2. Run control math logic and pipeline updates
                 raw_target_phi = navigator.move_joints_with_keyboard(timestep=TIMESTEP)

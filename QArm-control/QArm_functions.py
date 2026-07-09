@@ -26,6 +26,7 @@ class QArm_Lab_interface(QArmUtilities):
         self.gripper_state = "OPEN"
         self.cache_arm_joints = [0.0, 0.0, 0.0, 0.0]
         self.cache_gripper_pos = 0.0 
+        self.actual_arm_joints = [0.0, 0.0, 0.0, 0.0]
         self.gripper_lock = threading.Lock()
         self.gripper_stall_counter = 0
 
@@ -37,6 +38,13 @@ class QArm_Lab_interface(QArmUtilities):
         self.QArm_attached = True
         self.myArm = QArm_obj
         self.update_thread.start()
+
+    def check_joint_limits(self, phi):
+        for i in range(4):
+            if phi[i] < self.joint_mins[i] or phi[i] > self.joint_maxs[i]:
+                print(f"Phi: {phi}")
+                return False
+        return True
 
     def _check_joint_movement(self, phi):
         # 1. Check joint limits
@@ -86,12 +94,15 @@ class QArm_Lab_interface(QArmUtilities):
 
         while(self.running):
             self.myArm.read_std() # update sensor buffers
-            pos = self.myArm.measJointPosition[4]
-            vel = self.myArm.measJointSpeed[4]
-            current = self.myArm.measJointCurrent[4]
+            #print(f"{self.cache_arm_joints}")
+            grip_pos = self.myArm.measJointPosition[4]
+            grip_vel = self.myArm.measJointSpeed[4]
+            grip_current = self.myArm.measJointCurrent[4]
+
+            self.actual_arm_joints = self.myArm.measJointPosition[:4]
 
             with self.gripper_lock:
-                self._monitor_gripper(pos, vel, current)
+                self._monitor_gripper(grip_pos, grip_vel, grip_current)
                 self.myArm.read_write_std(phiCMD=self.cache_arm_joints, gprCMD=self.cache_gripper_pos, baseLED=(0, 1, 0))
 
             next_tick += RATE
@@ -135,13 +146,16 @@ class QArm_Lab_interface(QArmUtilities):
         if not self.QArm_attached:
             print("No QArm attached")
             return None
-
-        self.myArm.read_std()
-        return self.myArm.measJointPosition[:4]
+        
+        return self.actual_arm_joints
     
     def Jacobian(self, phi):
         J, _, _, _ = self.differential_kinematics(phi)
         return J
+    
+    def Inv_Jacobian(self, phi):
+        _, _, _, J_inv = self.differential_kinematics(phi)
+        return J_inv
     
     def close_gripper(self):
         '''

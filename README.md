@@ -11,6 +11,13 @@ This will also contain code that is used between multiple labs for convenience
 **`QArm_keyboard_control.py`**:  
  Implements control of the QArm using the keyboard via pygame. Generates a window that displays the live joint positions of the arm. Also note that the pygame window must be focused for the controls to register.
 
+ **`QArm_functions.py`**:  
+This is a key program for QArm usage in this lab. It acts as a middleman between the lab scripts and the Quanser QArm libraries. It passes through nessesary functions to the user such as writing joint positions, reading joint positions, kinematic solvers, etc. and allows for enforcing workspace limits.
+
+Once imported into your program, create a `QArm_Lab_Interface` object. This will initally give you access to the kinematic solvers. 
+
+If you create a QArm object then pass it in using `QArm_Lab_Interface.attach_QArm(myArm)`, you will be able to able to use the QArm control functions such as `write_to_arm(phi)`, `read_from_arm()`, etc. Commands and read joint positions are placed in buffers, while the actual QArm control reads/writes to these buffers and take place in a seperate thread running at 25Hz.
+
 ## Lab-1
 This contains programs used in lab 1 only.
 
@@ -26,6 +33,4 @@ For students looking to download the programs to run on their own machine to tes
 [Add instructions], likely a slightly modified version of the code will be required - or tell them to toggle the hardware setting
 
 # To-do:
-Implement some abstraction for the labs (only lab 1 right now) including functions such as:
-- `write_to_arm(phi)`
-- `read_arm_angles()`
+Work on physical baseplate and props - update lab manuals as needed
