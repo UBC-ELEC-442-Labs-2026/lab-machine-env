@@ -6,19 +6,7 @@ from scipy.interpolate import CubicSpline
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-import importlib.util
-import sys
-import constants
-
-# Import the QArm interface class
-file_path = constants.path_to_interface
-class_name = "QArm_Lab_interface"
-module_name = "QArm_Lab_interface_module"
-spec = importlib.util.spec_from_file_location(module_name, file_path)
-module = importlib.util.module_from_spec(spec)
-sys.modules[module_name] = module
-spec.loader.exec_module(module)
-QArm_Lab_interface = getattr(module, class_name)
+from QArm_functions import QArm_Lab_interface # type: ignore
 
 # ---------------------------------------------------------
 # Base Controller

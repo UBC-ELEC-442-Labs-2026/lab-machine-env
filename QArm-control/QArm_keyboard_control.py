@@ -6,6 +6,12 @@ from hal.products.qarm import QArmKeyboardNavigator, QArmUtilities
 from pal.utilities.keyboard import PygameKeyboard 
 from QArm_functions import QArm_Lab_interface
 
+#==========================================================
+# Note: If script exits with "ValueError: not enough values to unpack (expected 3, got 2)"
+# Go to Quanser\0_libraries\python\hal\products\qarm.py and change line 343
+# Remove gamma from unpacking and set to 0 in a new line.
+# ==========================================================
+
 if __name__ == "__main__":
 
     mode = "-1"
