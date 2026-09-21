@@ -68,6 +68,7 @@ class QArm_Lab_interface(QArmUtilities):
         Returns true if write successful, false otherwise.
         Halts the program if movement is unsafe.
         """
+        phi = phi.copy()  # Future phi changes don't affect output until next write_to_arm call
 
         if not self.QArm_attached:
             print("No QArm attached")
@@ -147,7 +148,7 @@ class QArm_Lab_interface(QArmUtilities):
             print("No QArm attached")
             return None
         
-        return self.actual_arm_joints
+        return self.actual_arm_joints.copy()  # Return a copy to avoid external modification
     
     def Jacobian(self, phi):
         J, _, _, _ = self.differential_kinematics(phi)
