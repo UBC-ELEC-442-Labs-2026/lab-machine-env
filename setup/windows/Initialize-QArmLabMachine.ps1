@@ -143,8 +143,8 @@ if ($LASTEXITCODE -ne 0) {
 $PythonVersion = ($VersionOutput |
     Select-Object -First 1).ToString().Trim()
 
-if ($PythonVersion -notmatch '^Python 3\.13(?:\.|$)') {
-    throw "Expected Python 3.13, but $BasePython reports $PythonVersion."
+if ($PythonVersion -notmatch '^Python 3\.1[34](?:\.|$)') {
+    throw "Expected Python 3.13 or 3.14, but $BasePython reports $PythonVersion."
 }
 
 Write-Host "Base Python: $PythonVersion"
@@ -170,8 +170,8 @@ else {
     $VenvVersion = ($VenvVersionOutput |
         Select-Object -First 1).ToString().Trim()
 
-    if ($VenvVersion -notmatch '^Python 3\.13(?:\.|$)') {
-        throw "The existing environment reports $VenvVersion, not Python 3.13."
+    if ($VenvVersion -notmatch '^Python 3\.1[34](?:\.|$)') {
+        throw "The existing environment reports $VenvVersion, not Python 3.13 or 3.14."
     }
 
     Write-Host "Existing environment found: $VenvVersion"
