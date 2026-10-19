@@ -1,9 +1,12 @@
-from pal.products.qarm import QArm
-from hal.products.qarm import QArmUtilities
 import time
-import numpy as np
-import matplotlib.pyplot as plt
+
 import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import numpy as np
+
+from hal.products.qarm import QArmUtilities
+from pal.products.qarm import QArm
+
 
 #region: Setup
 
@@ -71,15 +74,15 @@ def update(frame, myArm):
     dt = current_time - last_time
     last_time = current_time
 
-    # 1. WRITE TARGET & REFRESH HARDWARE ENCODER DATA
+    # WRITE TARGET & REFRESH HARDWARE ENCODER DATA
     myArm.read_write_std(phiCMD=q_next, gprCMD=gripCmd, baseLED=ledCmd)
     
-    # 2. CALCULATE ACTUAL POSITION VIA FORWARD KINEMATICS
+    # CALCULATE ACTUAL POSITION VIA FORWARD KINEMATICS
     current_joints = myArm.measJointPosition[0:4]
     location, rotation = myArmUtilities.forward_kinematics(np.append(current_joints, gamma))
     x, y, z = location[0], location[1], location[2]
     
-    # 3. CHECK FOR INTEGRATION ERROR BREAK CONDITION
+    # CHECK FOR INTEGRATION ERROR BREAK CONDITION
     distance_from_center = np.linalg.norm(location - CIRCLE_CENTER)
     if distance_from_center > DRIFT_THRESHOLD:
         print(f"⚠️ Simulation Halted! Integration drift exceeded threshold: {distance_from_center:.3f}m")
@@ -87,13 +90,13 @@ def update(frame, myArm):
             ani.event_source.stop() # Freezes the animation but keeps the window open
         return trail_graph, leading_dot
 
-    # 4. PATH TELEMETRY DRAWING
+    # PATH TELEMETRY DRAWING
     animated_points.append(location)
     matrix = np.array(animated_points)
     trail_graph.set_data_3d(matrix[:, 0], matrix[:, 1], matrix[:, 2])
     leading_dot.set_data_3d([x], [y], [z])
     
-    # 5. PURE OPEN-LOOP VELOCITY CALCULATIONS (No Kp Term!)
+    # PURE OPEN-LOOP VELOCITY CALCULATIONS
     # Desired circular trajectory components in the Y-Z plane
     v_y = -RADIUS * OMEGA * np.sin(OMEGA * t)
     v_z =  RADIUS * OMEGA * np.cos(OMEGA * t)
@@ -105,7 +108,7 @@ def update(frame, myArm):
     _, _, _, J_inv = myArmUtilities.differential_kinematics(q_next)
     q_dot = J_inv @ v_cmd 
 
-    # Pure numerical integration (Euler Step)
+    # Pure numerical integration
     q_next = q_next + q_dot * dt 
     
     return trail_graph, leading_dot
