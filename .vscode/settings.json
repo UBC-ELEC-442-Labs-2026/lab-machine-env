@@ -1,4 +1,4 @@
 {
     "python.defaultInterpreterPath": "C:\\ProgramData\\Qarm\\Python\\venv\\Scripts\\python.exe",
-    "python.useEnvironmentsExtension": true
+    "python.useEnvironmentsExtension": false
 }
