@@ -268,7 +268,7 @@ class QArm_Lab_interface(QArmUtilities):
             self.gripper_state = "OPEN"
             self.gripper_stall_counter = 0
 
-    def travel_to(self, phi_target, safe_z=0.35, tuck_r=0.25, speed=0.4):
+    def travel_to(self, phi_target, safe_z=0.35, tuck_r=0.25, speed=0.6):
         """
         Move to phi_target without sweeping through things on the table: lift the tip straight up
         to safe_z, pull it back to tuck_r from the base axis, turn the base, reach out above the
@@ -358,8 +358,8 @@ class QArm_Lab_interface(QArmUtilities):
         """Move the tip in a straight line to p_to. Returns the joint angles it ended at."""
         p_from, _ = self.forward_kinematics(np.append(q_from, 0))
 
-        # Points every 5 mm along the line
-        n = max(1, int(np.ceil(np.linalg.norm(p_to - p_from) / 0.005)))
+        # Points every 7.5 mm along the line
+        n = max(1, int(np.ceil(np.linalg.norm(p_to - p_from) / 0.0075)))
         dt = 0.04
         q = q_from
 
