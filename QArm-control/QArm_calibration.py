@@ -15,7 +15,7 @@ HEIGHT_OFFSET_C0 = -0.0128   # m
 HEIGHT_OFFSET_C1 = 0.1074    # m per m of reach
 REACH_RANGE = (0.25, 0.75)   # m; r is clamped to this range (the sweep covered 0.25 to 0.70 m)
 
-# Lowest allowed tip height when calibration is on (m, frame {0}: the bottom of the arm's base). 0.015 is 26 mm above the table,
+# Lowest allowed tip height when calibration is on (m, frame {0}: the bottom of the arm's base). 0.011 is 22 mm above the table,
 # which leaves room for the calibration error (about 7 mm) and the bottom edge of the closed fingers.
-MIN_TIP_Z0 = 0.015
+MIN_TIP_Z0 = 0.011
 TABLE_Z0 = -0.011
