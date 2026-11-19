@@ -29,7 +29,7 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((650, 160))
 
     # Instantiate QArm Lab interface
-    qarm_interface = QArm_Lab_interface()
+    qarm_interface = QArm_Lab_interface(calibration=True)
 
     # --- JOINT LIMIT DEFINITIONS (From Specification Sheet) ---
     # Converted from degrees to radians for mathematical comparisons
