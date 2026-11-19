@@ -18,3 +18,4 @@ REACH_RANGE = (0.25, 0.75)   # m; r is clamped to this range (the sweep covered 
 # Lowest allowed tip height when calibration is on (m, frame {0}: the bottom of the arm's base). 0.015 is 26 mm above the table,
 # which leaves room for the calibration error (about 7 mm) and the bottom edge of the closed fingers.
 MIN_TIP_Z0 = 0.015
+TABLE_Z0 = -0.011

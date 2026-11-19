@@ -85,7 +85,8 @@ class QArm_Lab_interface(QArmUtilities):
         
         floor = calib.MIN_TIP_Z0 if self.calibration else self.z_min
         if location[2] < floor:
-            print(f"Tip height {location[2]:.3f} m is below the floor limit {floor:.3f} m (tip at {np.round(location, 3)})")
+            print(f"Tip z = {location[2]:.3f} m ({(location[2] - calib.TABLE_Z0) * 1000:.0f} mm above the table) "
+                  f"is below the floor limit {floor:.3f} m ({(floor - calib.TABLE_Z0) * 1000:.0f} mm above the table)")
             return False
             
         return True
